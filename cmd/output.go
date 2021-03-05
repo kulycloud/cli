@@ -37,3 +37,10 @@ func printResourcesJson(res interface{}) error {
 	fmt.Println(string(out))
 	return nil
 }
+
+func checkErrorAndPrint(res interface{}, err error) error {
+	if err != nil {
+		return err
+	}
+	return printResources(res)
+}

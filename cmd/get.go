@@ -11,13 +11,6 @@ type GetCmd struct {
 	Resource string `arg:"" optional:"" name:"resource" help:"Resource to get"`
 }
 
-func checkErrorAndPrint(res interface{}, err error) error {
-	if err != nil {
-		return err
-	}
-	return printResources(res)
-}
-
 func (get *GetCmd) Run(_ *kong.Context) error {
 	c := client.NewClient(CLI.Instance)
 
@@ -34,5 +27,3 @@ func (get *GetCmd) Run(_ *kong.Context) error {
 	}
 	return fmt.Errorf("unknown type \"%s\"", get.Type)
 }
-
-
