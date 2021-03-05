@@ -11,45 +11,28 @@ type GetCmd struct {
 	Resource string `arg:"" optional:"" name:"resource" help:"Resource to get"`
 }
 
-func (get *GetCmd) Run(ctx *kong.Context) error {
+func checkErrorAndPrint(res interface{}, err error) error {
+	if err != nil {
+		return err
+	}
+	return printResources(res)
+}
+
+func (get *GetCmd) Run(_ *kong.Context) error {
 	c := client.NewClient(CLI.Instance)
+
 	if get.Type == "service" || get.Type == "s" {
 		if get.Resource != "" {
-			res, err := c.GetService(CLI.Namespace, get.Resource)
-			if err != nil {
-				fmt.Printf("Error: %s\n", err.Error())
-				return nil
-			}
-			printResources(res)
-
-		} else {
-			res, err := c.GetServices(CLI.Namespace)
-			if err != nil {
-				fmt.Printf("Error: %s\n", err.Error())
-				return nil
-			}
-
-			printResources(res)
+			return checkErrorAndPrint(c.GetService(CLI.Namespace, get.Resource))
 		}
-	} else {
+		return checkErrorAndPrint(c.GetServices(CLI.Namespace))
+	} else if get.Type == "route" || get.Type == "r" {
 		if get.Resource != "" {
-			res, err := c.GetRoute(CLI.Namespace, get.Resource)
-			if err != nil {
-				fmt.Printf("Error: %s\n", err.Error())
-				return nil
-			}
-			printResources(res)
-
-		} else {
-			res, err := c.GetRoutes(CLI.Namespace)
-			if err != nil {
-				fmt.Printf("Error: %s\n", err.Error())
-				return nil
-			}
-
-			printResources(res)
+			return checkErrorAndPrint(c.GetRoute(CLI.Namespace, get.Resource))
 		}
+		return checkErrorAndPrint(c.GetRoutes(CLI.Namespace))
 	}
-
-	return nil
+	return fmt.Errorf("unknown type \"%s\"", get.Type)
 }
+
+

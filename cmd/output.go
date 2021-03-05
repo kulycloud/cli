@@ -6,30 +6,34 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func printResources(res interface{}) {
+
+
+func printResources(res interface{}) error {
 	switch CLI.Output {
 	case "yaml":
-		printResourcesYaml(res)
-		break
+		return printResourcesYaml(res)
 	case "json":
-		printResourcesJson(res)
+		return printResourcesJson(res)
 	}
+	return fmt.Errorf("unknown output format \"%s\"", CLI.Output)
 }
 
-func printResourcesYaml(res interface{}) {
+func printResourcesYaml(res interface{}) error {
 	out, err := yaml.Marshal(res)
 	if err != nil {
-		fmt.Printf("Error marshalling json: %s", err.Error())
+		return fmt.Errorf("error marshalling yaml: %w", err)
 	}
 
 	fmt.Println(string(out))
+	return nil
 }
 
-func printResourcesJson(res interface{}) {
+func printResourcesJson(res interface{}) error {
 	out, err := json.Marshal(res)
 	if err != nil {
-		fmt.Printf("Error marshalling json: %s", err.Error())
+		return fmt.Errorf("error marshalling yaml: %w", err)
 	}
 
 	fmt.Println(string(out))
+	return nil
 }
